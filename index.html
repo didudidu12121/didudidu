@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>滴嘟滴嘟 · 给日常一点小惊喜</title>
+<meta name="description" content="滴嘟滴嘟，一个可以点击、抽签、写秘密的小小互动空间。">
+<style>
+:root {
+  --bg: #f7f7ef;
+  --paper: #fffef8;
+  --ink: #26352e;
+  --muted: #738078;
+  --green: #bfe8cf;
+  --green-deep: #3b7558;
+  --yellow: #ffe7a3;
+  --pink: #ffd7d7;
+  --line: #e6e9dd;
+  --shadow: 0 14px 35px rgba(48, 77, 58, .08);
+}
+body.dark {
+  --bg: #19251f;
+  --paper: #24342b;
+  --ink: #f2f6ef;
+  --muted: #b3c0b5;
+  --green: #385c48;
+  --green-deep: #c4f0d2;
+  --yellow: #5c5030;
+  --pink: #5c3b40;
+  --line: #3c4d41;
+  --shadow: 0 14px 35px rgba(0,0,0,.18);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  line-height: 1.7; transition: background .25s, color .25s;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+.topbar {
+  max-width: 1100px; margin: auto; padding: 22px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 15px;
+}
+.brand {
+  border: 0; background: transparent; color: var(--ink);
+  font-weight: 900; font-size: 23px; letter-spacing: 1px;
+}
+.brand span { display: inline-block; transform: rotate(-8deg); }
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.pill {
+  border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
+  background: var(--paper); color: var(--ink); font-size: 13px;
+}
+.wrap { max-width: 1100px; margin: auto; padding: 0 24px 60px; }
+.hero {
+  min-height: 380px; position: relative; overflow: hidden;
+  background: var(--green); border-radius: 30px; padding: clamp(30px, 6vw, 70px);
+  display: grid; grid-template-columns: 1.3fr .7fr; align-items: center; gap: 20px;
+}
+.eyebrow { font-size: 12px; letter-spacing: 3px; font-weight: 800; opacity: .72; }
+h1 { font-size: clamp(42px, 7vw, 76px); line-height: 1.12; margin: 15px 0 18px; letter-spacing: -2px; }
+.hero p { max-width: 470px; margin: 0 0 25px; color: var(--ink); opacity: .8; }
+.primary {
+  border: 0; border-radius: 999px; padding: 13px 22px; background: var(--ink);
+  color: var(--paper); font-weight: 700; box-shadow: 0 5px 0 rgba(0,0,0,.08);
+  transition: transform .15s;
+}
+.primary:hover { transform: translateY(-2px); }
+.doodle { display: grid; place-items: center; min-height: 210px; position: relative; }
+.blob {
+  width: min(245px, 55vw); aspect-ratio: 1; border-radius: 44% 56% 57% 43% / 44% 43% 57% 56%;
+  background: var(--yellow); display: grid; place-items: center; font-size: 100px;
+  box-shadow: inset -12px -12px 0 rgba(150,120,50,.07); animation: float 4s ease-in-out infinite;
+}
+.spark { position: absolute; font-size: 28px; animation: twinkle 2s ease-in-out infinite; }
+.s1 { top: 10%; left: 10%; } .s2 { right: 4%; top: 22%; animation-delay: .5s; } .s3 { bottom: 5%; left: 17%; animation-delay: 1s; }
+@keyframes float { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-12px) rotate(4deg); } }
+@keyframes twinkle { 0%,100% { transform: scale(.8) rotate(0); opacity: .65; } 50% { transform: scale(1.2) rotate(15deg); opacity: 1; } }
+.section-head { display: flex; align-items: end; justify-content: space-between; gap: 15px; margin: 42px 2px 18px; }
+.section-head h2 { margin: 0; font-size: 25px; }
+.section-head p { margin: 0; color: var(--muted); font-size: 13px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 22px;
+  padding: 23px; box-shadow: var(--shadow); min-width: 0;
+}
+.card h3 { margin: 8px 0 6px; font-size: 18px; }
+.card p { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+.emoji { font-size: 28px; }
+.result {
+  min-height: 58px; background: var(--bg); border: 1px dashed var(--line);
+  border-radius: 14px; padding: 12px; margin: 13px 0; font-size: 14px;
+  display: flex; align-items: center;
+}
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.soft-btn {
+  border: 1px solid var(--line); border-radius: 999px; padding: 9px 14px;
+  background: var(--bg); color: var(--ink); font-size: 13px;
+}
+.soft-btn:hover, .pill:hover { filter: brightness(.97); transform: translateY(-1px); }
+.moods { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.mood {
+  width: 48px; height: 48px; border: 1px solid var(--line); border-radius: 15px;
+  background: var(--bg); font-size: 23px; transition: transform .15s, border .15s;
+}
+.mood:hover { transform: translateY(-3px) rotate(-4deg); }
+.mood.selected { border: 2px solid var(--green-deep); background: var(--green); }
+input, textarea {
+  width: 100%; border: 1px solid var(--line); border-radius: 13px; padding: 12px 14px;
+  background: var(--bg); color: var(--ink); outline: none; margin: 5px 0 10px;
+}
+textarea { min-height: 85px; resize: vertical; }
+input:focus, textarea:focus { border-color: var(--green-deep); }
+.wide { grid-column: span 2; }
+.letter { background: var(--pink); border: 0; }
+.letter .result { background: rgba(255,255,255,.35); color: var(--ink); border-color: rgba(80,60,60,.15); }
+.secret-count { color: var(--muted); font-size: 12px; }
+.footer {
+  text-align: center; padding: 35px 15px 5px; color: var(--muted); font-size: 13px;
+}
+.toast {
+  position: fixed; left: 50%; bottom: 25px; transform: translate(-50%, 25px);
+  background: var(--ink); color: var(--paper); padding: 12px 18px; border-radius: 999px;
+  box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: .25s; z-index: 20;
+  max-width: calc(100vw - 30px); text-align: center; font-size: 14px;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.bubble {
+  position: fixed; z-index: 30; pointer-events: none; font-size: 22px;
+  animation: pop 1s ease-out forwards;
+}
+@keyframes pop { 0% { opacity: 0; transform: translateY(0) scale(.5) rotate(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-100px) scale(1.4) rotate(35deg); } }
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; padding: 32px 25px; }
+  .doodle { min-height: 180px; }
+  .blob { width: 175px; font-size: 75px; }
+  .grid { grid-template-columns: 1fr; }
+  .wide { grid-column: span 1; }
+  .section-head { align-items: start; flex-direction: column; }
+  .topbar { padding: 16px; }
+  .wrap { padding: 0 16px 45px; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="brand" id="brandBtn" aria-label="滴嘟滴嘟彩蛋">🫧 滴嘟滴嘟<span>！</span></button>
+  <div class="top-actions">
+    <button class="pill" id="soundBtn">🔔 滴嘟一下</button>
+    <button class="pill" id="themeBtn" aria-label="切换夜间模式">🌙 夜间模式</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" id="home">
+    <div>
+      <div class="eyebrow">A TINY HAPPY PLACE</div>
+      <h1>滴嘟滴嘟，<br>今天也要开心。</h1>
+      <p>欢迎来到这个小小的互动星球。随便点点、抽个签、留下一点心情——说不定会遇见一份小惊喜。</p>
+      <button class="primary" id="surpriseBtn">给我一点惊喜 ✨</button>
+    </div>
+    <div class="doodle" aria-hidden="true">
+      <span class="spark s1">✦</span><span class="spark s2">♡</span><span class="spark s3">✧</span>
+      <div class="blob" id="blob">🐸</div>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <h2>来玩点小东西</h2><p>不赶时间，慢慢逛。</p>
+  </div>
+
+  <section class="grid">
+    <article class="card">
+      <div class="emoji">🫧</div><h3>滴嘟能量按钮</h3>
+      <p>每点一次，收获一句随机的小鼓励。多点几次也没关系。</p>
+      <div class="result" id="quoteResult" aria-live="polite">准备好了吗？点一下，收取今日份小能量。</div>
+      <div class="btn-row"><button class="primary" id="quoteBtn">滴嘟！</button><button class="soft-btn" id="bubbleBtn">放泡泡</button></div>
+    </article>
+
+    <article class="card">
+      <div class="emoji">🌦️</div><h3>今天的心情天气</h3>
+      <p>选一个最像现在的你，给今天的心情一个名字。</p>
+      <div class="moods" id="moods">
+        <button class="mood" data-mood="晴朗" aria-label="晴朗">☀️</button>
+        <button class="mood" data-mood="多云" aria-label="多云">⛅</button>
+        <button class="mood" data-mood="下雨" aria-label="下雨">🌧️</button>
+        <button class="mood" data-mood="彩虹" aria-label="彩虹">🌈</button>
+        <button class="mood" data-mood="星夜" aria-label="星夜">🌙</button>
+      </div>
+      <div class="result" id="moodResult">还没选天气呢。</div>
+    </article>
+
+    <article class="card">
+      <div class="emoji">🍀</div><h3>今日幸运抽签</h3>
+      <p>认真生活之外，也给运气一个登场的机会。</p>
+      <div class="result" id="luckResult">你的今日小签还没揭晓。</div>
+      <button class="primary" id="luckBtn">抽一支签</button>
+    </article>
+
+    <article class="card wide letter">
+      <div class="emoji">💌</div><h3>秘密信箱</h3>
+      <p>写一句此刻想说的话，滴嘟会给你一封专属回信。内容只在当前页面生成，不会发送到服务器。</p>
+      <textarea id="secretInput" maxlength="180" placeholder="比如：今天有一点累，但我还不错……"></textarea>
+      <div class="btn-row"><button class="primary" id="letterBtn">打开回信</button><span class="secret-count" id="charCount">0 / 180</span></div>
+      <div class="result" id="letterResult">你的信还在路上，写好了就按下按钮吧。</div>
+    </article>
+
+    <article class="card">
+      <div class="emoji">🎯</div><h3>随机小任务</h3>
+      <p>偶尔做点小事，让普通的一天多一点点变化。</p>
+      <div class="result" id="taskResult">抽一个轻松的小任务试试。</div>
+      <button class="primary" id="taskBtn">抽取任务</button>
+    </article>
+  </section>
+
+  <footer class="footer">
+    <div>🫧 滴嘟滴嘟 · 给平凡日常一点小惊喜</div>
+    <div>点击左上角的「滴嘟滴嘟」试试隐藏彩蛋。</div>
+  </footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const quotes = [
+  "你不用每天都闪闪发光，平安顺利也很棒。",
+  "先喝一口水，再解决全世界。",
+  "今天的你，已经完成了今天的任务。",
+  "允许自己慢一点，生活不是竞速赛。",
+  "小小的进步，也值得认真夸奖。",
+  "你值得拥有一个不被催促的下午。",
+  "不开心的时候，也可以先去吃点好吃的。",
+  "请记得：休息不是偷懒，是给自己充电。",
+  "今天也请站在自己这一边。",
+  "愿你遇见的小事，都刚好有一点可爱。"
+];
+const lucks = [
+  "幸运关键词：顺其自然。别急，好事正在排队。",
+  "今日好运：会遇到一个让你嘴角上扬的小瞬间。",
+  "幸运颜色：薄荷绿。今天适合整理桌面或心情。",
+  "今日提示：把想做的小事先做五分钟。",
+  "好运提醒：主动问候一个很久没聊的人吧。",
+  "今日隐藏成就：好好吃饭、好好喝水。",
+  "幸运指数：🌟🌟🌟🌟☆ 记得给自己留一点余地。",
+  "今日签语：不必一下子走很远，走一步也算。"
+];
+const tasks = [
+  "伸个懒腰，转转肩膀，给身体 20 秒自由。",
+  "去喝一杯水，回来给自己一个赞。",
+  "找一首喜欢的歌，认真听完副歌。",
+  "给今天拍一张照片，什么都可以。",
+  "把桌面上一个小角落整理干净。",
+  "给一个重要的人发句简单的问候。",
+  "看向窗外，慢慢深呼吸三次。",
+  "对镜子里的自己说：今天辛苦啦。"
+];
+const letters = [
+  "收到啦。希望你能对自己温柔一点，很多事不需要今天就有答案。🫶",
+  "滴嘟回信：你愿意把这句话写下来，就已经是在照顾自己的心情了。🌱",
+  "已为你盖上软乎乎的印章：允许自己有各种情绪，也允许明天重新开始。💌",
+  "宇宙小邮差说：先别急着责怪自己，给自己一点时间，好吗？✨",
+  "信件已读。请收下这份小小的拥抱，愿你今晚睡得安稳。🐸"
+];
+let toastTimer, brandClicks = 0, brandTimer;
+function toast(message) {
+  const el = $("toast"); el.textContent = message; el.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 2300);
+}
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function bubbles(count = 12, originX = window.innerWidth / 2, originY = window.innerHeight / 2) {
+  const icons = ["🫧", "✨", "💚", "♡", "✦", "🌱"];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("span"); el.className = "bubble"; el.textContent = pick(icons);
+    el.style.left = (originX + (Math.random() - .5) * 150) + "px";
+    el.style.top = (originY + (Math.random() - .5) * 50) + "px";
+    el.style.animationDelay = (Math.random() * .22) + "s";
+    document.body.appendChild(el); setTimeout(() => el.remove(), 1300);
+  }
+}
+function clickBubblesFrom(el, count = 12) {
+  const r = el.getBoundingClientRect(); bubbles(count, r.left + r.width / 2, r.top + r.height / 2);
+}
+$("quoteBtn").addEventListener("click", (e) => {
+  $("quoteResult").textContent = pick(quotes); clickBubblesFrom(e.currentTarget, 9);
+});
+$("bubbleBtn").addEventListener("click", (e) => {
+  clickBubblesFrom(e.currentTarget, 20); toast("泡泡已发射！🫧");
+});
+$("soundBtn").addEventListener("click", (e) => {
+  $("quoteResult").textContent = pick(quotes); clickBubblesFrom(e.currentTarget, 14); toast("滴——嘟！今日份能量已送达。");
+});
+$("surpriseBtn").addEventListener("click", (e) => {
+  const things = ["blob", "quoteResult", "luckResult", "taskResult"];
+  const choice = pick(things);
+  if (choice === "blob") { $("blob").textContent = pick(["🐸","🐣","🦭","🐱","🐼","🐰"]); toast("你的守护小动物来啦！"); }
+  if (choice === "quoteResult") $("quoteResult").textContent = pick(quotes);
+  if (choice === "luckResult") $("luckResult").textContent = pick(lucks);
+  if (choice === "taskResult") $("taskResult").textContent = pick(tasks);
+  clickBubblesFrom(e.currentTarget, 20);
+  $(choice === "blob" ? "home" : choice).scrollIntoView({behavior:"smooth", block:"center"});
+});
+$("moods").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-mood]"); if (!btn) return;
+  document.querySelectorAll(".mood").forEach(b => b.classList.toggle("selected", b === btn));
+  const responses = {
+    "晴朗":"晴朗模式已开启！把开心的事记下来，让它多停留一会儿。☀️",
+    "多云":"多云也没关系，太阳只是暂时躲起来了。⛅",
+    "下雨":"给你递一把小伞。今天可以不用那么坚强。🌧️",
+    "彩虹":"哇，彩虹天气！愿今天有一点意料之外的好事。🌈",
+    "星夜":"适合慢下来，听听歌，给自己一点安静的空间。🌙"
+  };
+  $("moodResult").textContent = responses[btn.dataset.mood];
+  toast("已记录今天的心情天气：" + btn.dataset.mood);
+});
+$("luckBtn").addEventListener("click", (e) => {
+  $("luckResult").textContent = pick(lucks); clickBubblesFrom(e.currentTarget, 10);
+});
+$("taskBtn").addEventListener("click", (e) => {
+  $("taskResult").textContent = pick(tasks); clickBubblesFrom(e.currentTarget, 8);
+});
+$("secretInput").addEventListener("input", () => {
+  $("charCount").textContent = $("secretInput").value.length + " / 180";
+});
+$("letterBtn").addEventListener("click", (e) => {
+  const text = $("secretInput").value.trim();
+  if (!text) { toast("先写一句话吧，滴嘟在认真等你。"); $("secretInput").focus(); return; }
+  $("letterResult").textContent = pick(letters);
+  clickBubblesFrom(e.currentTarget, 12);
+});
+$("themeBtn").addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  const dark = document.body.classList.contains("dark");
+  $("themeBtn").textContent = dark ? "☀️ 白天模式" : "🌙 夜间模式";
+  toast(dark ? "夜间模式开启，晚安星球。🌙" : "阳光回来啦。☀️");
+});
+$("brandBtn").addEventListener("click", (e) => {
+  brandClicks++; clickBubblesFrom(e.currentTarget, 5);
+  clearTimeout(brandTimer);
+  brandTimer = setTimeout(() => { brandClicks = 0; }, 1800);
+  if (brandClicks >= 5) {
+    brandClicks = 0; $("blob").textContent = "👾";
+    toast("隐藏彩蛋解锁！滴嘟星球的神秘访客出现了！🎉");
+    bubbles(28, window.innerWidth / 2, 120);
+  } else {
+    toast("再点 " + (5 - brandClicks) + " 次，看看会发生什么？");
+  }
+});
+</script>
+</body>
+</html>
